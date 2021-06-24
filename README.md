@@ -1,0 +1,2 @@
+# geekshop
+For Django lessons
