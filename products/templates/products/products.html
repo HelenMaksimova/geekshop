@@ -2,6 +2,8 @@
 
 {% load static %}
 
+{% load products_filters %}
+
 <!-- Custom styles for this template -->
 {% block css %}
 
@@ -74,7 +76,7 @@
                                     <h4 class="card-title">
                                         <a href="#">{{ product.name }}</a>
                                     </h4>
-                                    <h5>{{ product.price }}</h5>
+                                    <h5>{{ product.price|price_format }} руб.</h5>
                                     <p class="card-text">{{ product.description }}</p>
                                 </div>
                                 <div class="card-footer text-center">
