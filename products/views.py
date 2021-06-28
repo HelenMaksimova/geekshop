@@ -11,7 +11,10 @@ def index(request):
 
 
 def products(request):
-    context = from_json_load('products.json')
+    context = {
+        'title': 'GeekShop - Каталог',
+        'products': from_json_load('products.json')
+    }
     return render(request, 'products/products.html', context)
 
 
