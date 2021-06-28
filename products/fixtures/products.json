@@ -1,6 +1,4 @@
-{
-  "title": "GeekShop - Каталог",
-  "products": [
+[
     {
       "img_path": "/vendor/img/products/Adidas-hoodie.png",
       "name": "Худи черного цвета с монограммами adidas Originals",
@@ -38,4 +36,3 @@
       "description": "Легкая эластичная ткань сирсакер Фактурная ткань."
     }
   ]
-}
