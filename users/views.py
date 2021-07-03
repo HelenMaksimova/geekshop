@@ -33,8 +33,17 @@ def logout(request):
 
 def registration(request):
 
+    form = RegistrationUserForm()
+
+    if request.method == 'POST':
+        form = RegistrationUserForm(data=request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('users:login'))
+
     context = {
-        'title': 'GeekShop - Регистрация'
+        'title': 'GeekShop - Регистрация',
+        'form': form,
     }
 
     return render(request, 'users/registration.html', context)
