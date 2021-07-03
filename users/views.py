@@ -40,6 +40,8 @@ def registration(request):
         if form.is_valid():
             form.save()
             return HttpResponseRedirect(reverse('users:login'))
+        else:
+            print(form.errors)
 
     context = {
         'title': 'GeekShop - Регистрация',
