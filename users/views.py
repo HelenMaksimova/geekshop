@@ -1,5 +1,5 @@
 from django.shortcuts import render, HttpResponseRedirect
-from users.forms import LoginUserForm, RegistrationUserForm
+from users.forms import LoginUserForm, RegistrationUserForm, ProfileUserForm
 from django.urls import reverse
 from django.contrib import auth, messages
 
@@ -46,3 +46,21 @@ def registration(request):
     }
 
     return render(request, 'users/registration.html', context)
+
+
+def profile(request):
+
+    form = ProfileUserForm(instance=request.user)
+
+    if request.method == 'POST':
+        form = ProfileUserForm(instance=request.user, files=request.FILES, data=request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Профиль успешно изменён!')
+            return HttpResponseRedirect(reverse('users:profile'))
+
+    context = {
+        'title': 'GeekShop - Личный кабинет',
+        'form': form,
+    }
+    return render(request, 'users/profile.html', context)
