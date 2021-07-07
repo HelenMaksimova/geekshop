@@ -2,6 +2,7 @@ from django.shortcuts import render, HttpResponseRedirect
 from users.forms import LoginUserForm, RegistrationUserForm, ProfileUserForm
 from django.urls import reverse
 from django.contrib import auth, messages
+from baskets.models import Basket
 
 
 def login(request):
@@ -62,5 +63,6 @@ def profile(request):
     context = {
         'title': 'GeekShop - Личный кабинет',
         'form': form,
+        'baskets': Basket.objects.filter(user=request.user)
     }
     return render(request, 'users/profile.html', context)
