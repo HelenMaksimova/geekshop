@@ -54,7 +54,9 @@ class ProfileUserForm(UserChangeForm):
     first_name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control py-4'}))
     last_name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control py-4'}))
     image = forms.ImageField(widget=forms.FileInput(attrs={'class': 'custom-file-input'}), required=False)
-    birthday = forms.DateField(widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control py-4'}), required=False)
+    birthday = forms.DateField(widget=forms.DateInput(attrs={
+        'type': 'date', 'class': 'form-control py-4'}, format=('%Y-%m-%d')), required=False)
+
 
     class Meta:
         model = User
