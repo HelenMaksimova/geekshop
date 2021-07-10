@@ -2,6 +2,7 @@ from django.db import models
 from users.models import User
 from products.models import Product
 
+
 class Basket(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -12,15 +13,15 @@ class Basket(models.Model):
     def __str__(self):
         return f'Корзина для {self.user.username} | Товар {self.product.name}'
 
-    @classmethod
-    def total_quantity(cls, user):
-        elements = cls.objects.filter(user=user)
-        return sum(item.quantity for item in elements)
+    @property
+    def elements(self):
+        return Basket.objects.filter(user=self.user)
 
-    @classmethod
-    def total_sum(cls, user):
-        elements = cls.objects.filter(user=user)
-        return sum(item.sum() for item in elements)
+    def total_quantity(self):
+        return sum(item.quantity for item in self.elements)
+
+    def total_sum(self):
+        return sum(item.sum() for item in self.elements)
 
     def sum(self):
         return self.quantity * self.product.price
