@@ -3,6 +3,7 @@ from users.forms import LoginUserForm, RegistrationUserForm, ProfileUserForm
 from django.urls import reverse
 from django.contrib import auth, messages
 from baskets.models import Basket
+from django.contrib.auth.decorators import login_required
 
 
 def login(request):
@@ -27,7 +28,7 @@ def login(request):
 
 def logout(request):
     auth.logout(request)
-    return HttpResponseRedirect(reverse('index'))
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
 def registration(request):
@@ -49,6 +50,7 @@ def registration(request):
     return render(request, 'users/registration.html', context)
 
 
+@login_required
 def profile(request):
 
     form = ProfileUserForm(instance=request.user)
