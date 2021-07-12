@@ -1,7 +1,8 @@
 from django.shortcuts import render, HttpResponseRedirect
-from users.forms import LoginUserForm, RegistrationUserForm
+from users.forms import LoginUserForm, RegistrationUserForm, ProfileUserForm
 from django.urls import reverse
-from django.contrib import auth
+from django.contrib import auth, messages
+from baskets.models import Basket
 
 
 def login(request):
@@ -15,8 +16,6 @@ def login(request):
             if user and user.is_active:
                 auth.login(request, user)
                 return HttpResponseRedirect(reverse('index'))
-        else:
-            print(form.errors)
 
     context = {
         'title': 'GeekShop - Авторизация',
@@ -39,9 +38,8 @@ def registration(request):
         form = RegistrationUserForm(data=request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request, 'Регистрация прошла успешно!')
             return HttpResponseRedirect(reverse('users:login'))
-        else:
-            print(form.errors)
 
     context = {
         'title': 'GeekShop - Регистрация',
@@ -49,3 +47,22 @@ def registration(request):
     }
 
     return render(request, 'users/registration.html', context)
+
+
+def profile(request):
+
+    form = ProfileUserForm(instance=request.user)
+
+    if request.method == 'POST':
+        form = ProfileUserForm(instance=request.user, files=request.FILES, data=request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Профиль успешно изменён!')
+            return HttpResponseRedirect(reverse('users:profile'))
+
+    context = {
+        'title': 'GeekShop - Личный кабинет',
+        'form': form,
+        'baskets': Basket.objects.filter(user=request.user)
+    }
+    return render(request, 'users/profile.html', context)
