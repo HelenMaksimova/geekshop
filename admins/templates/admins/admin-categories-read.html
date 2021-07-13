@@ -1,0 +1,49 @@
+{% extends 'admins/base.html' %}
+{% block content %}
+    <main>
+                <div class="container-fluid">
+                    <h1 class="mt-4">Категории</h1>
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <i class="fas fa-table mr-1"></i>
+                            Категории
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                    <tr>
+                                        <th>Название</th>
+                                        <th>Описание</th>
+                                    </tr>
+                                    </thead>
+                                    <tfoot>
+                                    <tr>
+                                        <th>Название</th>
+                                        <th>Описание</th>
+                                    </tr>
+                                    </tfoot>
+                                    <tbody>
+                                    {% for current_category in admin_categories%}
+                                        <tr>
+                                            <td>
+                                                <a href="{% url 'admins:categories_update' current_category.id %}" style="color: dodgerblue">
+                                                    {{ current_category.name}}
+                                                </a>
+                                            </td>
+                                            <td>{{ current_category.description }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <a href="{% url 'admins:categories_create' %}">
+                                <button class="btn btn-success">Создать категорию</button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </main>
+{% endblock %}
