@@ -1,0 +1,67 @@
+{% extends 'admins/base.html' %}
+{% block content %}
+    <main>
+                <div class="container-fluid">
+                    <h1 class="mt-4">Продукты</h1>
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <i class="fas fa-table mr-1"></i>
+                            Продукты
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                    <tr>
+                                        <th>Название</th>
+                                        <th>Описание</th>
+                                        <th>Цена</th>
+                                        <th>Количество</th>
+                                        <th>Изображение</th>
+                                        <th>Категория</th>
+
+                                    </tr>
+                                    </thead>
+                                    <tfoot>
+                                    <tr>
+                                        <th>Название</th>
+                                        <th>Описание</th>
+                                        <th>Цена</th>
+                                        <th>Количество</th>
+                                        <th>Изображение</th>
+                                        <th>Категория</th>
+                                    </tr>
+                                    </tfoot>
+                                    <tbody>
+                                    {% for current_good in admin_goods%}
+                                        <tr>
+                                            <td>
+                                                <a href="{% url 'admins:goods_update' current_good.id %}" style="color: dodgerblue">
+                                                    {{ current_good.name}}
+                                                </a>
+                                            </td>
+                                            <td>{{ current_good.description }}</td>
+                                            <td>{{ current_good.price}} руб.</td>
+                                            <td>{{ current_good.quantity }}</td>
+                                            <td>
+                                                {% if current_good.image %}
+                                                    <a href="{{ current_good.image.url }}" target="_blank">{{ current_good.image}}</a>
+                                                {% else %}
+                                                    Нет изображения
+                                                {% endif %}</td>
+                                            <td>{{ current_good.category.name }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <a href="{% url 'admins:goods_create' %}">
+                                <button class="btn btn-success">Создать продукт</button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </main>
+{% endblock %}

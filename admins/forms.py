@@ -24,3 +24,24 @@ class CategoryAdminForm(forms.ModelForm):
     class Meta:
         model = ProductCategory
         fields = ('name', 'description')
+
+
+class GoodAdminForm(forms.ModelForm):
+    name = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control py-4'}))
+    image = forms.ImageField(
+        widget=forms.FileInput(attrs={'class': 'custom-file-input'}), required=False)
+    description = forms.CharField(
+        widget=forms.Textarea(attrs={'class': 'form-control py-4'}))
+    price = forms.DecimalField(
+        widget=forms.NumberInput(attrs={'class': 'form-control py-4'}), max_digits=8, decimal_places=2)
+    quantity = forms.IntegerField(
+        widget=forms.NumberInput(attrs={'class': 'form-control py-4'}))
+    category = forms.ModelChoiceField(
+        queryset=ProductCategory.objects.all(),
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        empty_label='----Выберите категорию----')
+
+    class Meta:
+        model = Product
+        fields = ('name', 'image', 'description', 'price', 'quantity', 'category')

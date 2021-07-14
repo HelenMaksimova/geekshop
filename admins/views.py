@@ -1,7 +1,7 @@
 from django.shortcuts import render, HttpResponseRedirect
 from users.models import User
 from products.models import ProductCategory, Product
-from admins.forms import UserAdminRegistrationForm, UserAdminProfileForm, CategoryAdminForm
+from admins.forms import UserAdminRegistrationForm, UserAdminProfileForm, CategoryAdminForm, GoodAdminForm
 from django.urls import reverse
 from django.contrib.auth.decorators import user_passes_test
 
@@ -113,3 +113,51 @@ def admin_categories_delete(request, id):
     category = ProductCategory.objects.get(id=id)
     category.delete()
     return HttpResponseRedirect(reverse('admins:categories_read'))
+
+
+@user_passes_test(enter_validate)
+def admin_goods_read(request):
+    context = {
+        'title': 'Административная панель - Продукты',
+        'admin_goods': Product.objects.all(),
+    }
+    return render(request, 'admins/admin-goods-read.html', context)
+
+
+@user_passes_test(enter_validate)
+def admin_goods_create(request):
+    form = GoodAdminForm()
+    if request.method == 'POST':
+        form = GoodAdminForm(data=request.POST, files=request.FILES)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('admins:goods_read'))
+    context = {
+        'title': 'Административная панель - Создание продукта',
+        'form': form,
+    }
+    return render(request, 'admins/admin-goods-create.html', context)
+
+
+@user_passes_test(enter_validate)
+def admin_goods_update(request, id):
+    selected_good = Product.objects.get(id=id)
+    form = GoodAdminForm(instance=selected_good)
+    if request.method == 'POST':
+        form = GoodAdminForm(instance=selected_good, data=request.POST, files=request.FILES)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('admins:goods_read'))
+    context = {
+        'title': 'Административная панель - Редактирование продукта',
+        'form': form,
+        'selected_good': selected_good,
+    }
+    return render(request, 'admins/admin-goods-update-delete.html', context)
+
+
+@user_passes_test(enter_validate)
+def admin_goods_delete(request, id):
+    good = Product.objects.get(id=id)
+    good.delete()
+    return HttpResponseRedirect(reverse('admins:goods_read'))
