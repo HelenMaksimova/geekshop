@@ -61,31 +61,34 @@
                 </div>
 
                 <div class="row">
+                    {% if products %}
+                        {% for product in products %}
 
-                    {% for product in products %}
-
-                        <div class="col-lg-4 col-md-6 mb-4">
-                            <div class="card h-100">
-                                <a href="#">
-                                    <img class="card-img-top"
-                                         src="{{ product.image.url }}"
-                                         alt="">
-                                </a>
-                                <div class="card-body">
-                                    <h4 class="card-title">
-                                        <a href="#">{{ product.name }}</a>
-                                    </h4>
-                                    <h5>{{ product.price|price_format }} руб.</h5>
-                                    <p class="card-text">{{ product.description }}</p>
-                                </div>
-                                <div class="card-footer text-center">
-                                    <a class="btn btn-outline-success" href="{% url 'baskets:basket_add' product.id %}">Отправить в корзину</a>
+                            <div class="col-lg-4 col-md-6 mb-4">
+                                <div class="card h-100">
+                                    <a href="#">
+                                        <img class="card-img-top"
+                                             src="{{ product.image.url }}"
+                                             alt="">
+                                    </a>
+                                    <div class="card-body">
+                                        <h4 class="card-title">
+                                            <a href="#">{{ product.name }}</a>
+                                        </h4>
+                                        <h5>{{ product.price|price_format }} руб.</h5>
+                                        <p class="card-text">{{ product.description }}</p>
+                                    </div>
+                                    <div class="card-footer text-center">
+                                        <a class="btn btn-outline-success" href="{% url 'baskets:basket_add' product.id %}">Отправить в корзину</a>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                    {% endfor %}
+                        {% endfor %}
+                    {% else %}
+                        <h1 class="my-2">В данной категории пока нет товаров</h1>
 
+                    {% endif %}
                 </div>
 
                 <nav aria-label="Page navigation example">
