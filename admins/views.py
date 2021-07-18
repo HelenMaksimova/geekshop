@@ -2,7 +2,7 @@ from django.shortcuts import render, HttpResponseRedirect
 from users.models import User
 from products.models import ProductCategory, Product
 from admins.forms import UserAdminRegistrationForm, UserAdminProfileForm, CategoryAdminForm, GoodAdminForm
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse_lazy
 from django.contrib.auth.decorators import user_passes_test
 from django.utils.decorators import method_decorator
 from django.views.generic.list import ListView
@@ -24,11 +24,7 @@ def index(request):
 class AdminUserListView(ListView):
     model = User
     template_name = 'admins/admin-users-read.html'
-
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super().get_context_data()
-        context['title'] = 'Административная панель - Пользователи'
-        return context
+    extra_context = {'title': 'Административная панель - Пользователи'}
 
     @method_decorator(user_passes_test(enter_validate))
     def dispatch(self, request, *args, **kwargs):
@@ -76,11 +72,7 @@ class AdminUserDeleteView(DeleteView):
 class AdminCategoryListView(ListView):
     model = ProductCategory
     template_name = 'admins/admin-categories-read.html'
-
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super().get_context_data()
-        context['title'] = 'Административная панель - Категории'
-        return context
+    extra_context = {'title': 'Административная панель - Категории'}
 
     @method_decorator(user_passes_test(enter_validate))
     def dispatch(self, request, *args, **kwargs):
@@ -124,11 +116,7 @@ class AdminCategoryDeleteView(DeleteView):
 class AdminGoodListView(ListView):
     model = Product
     template_name = 'admins/admin-goods-read.html'
-
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super().get_context_data()
-        context['title'] = 'Административная панель - Продукты'
-        return context
+    extra_context = {'title': 'Административная панель - Продукты'}
 
     @method_decorator(user_passes_test(enter_validate))
     def dispatch(self, request, *args, **kwargs):
