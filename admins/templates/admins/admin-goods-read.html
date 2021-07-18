@@ -33,7 +33,7 @@
                                     </tr>
                                     </tfoot>
                                     <tbody>
-                                    {% for current_good in admin_goods%}
+                                    {% for current_good in object_list%}
                                         <tr>
                                             <td>
                                                 <a href="{% url 'admins:goods_update' current_good.id %}" style="color: dodgerblue">
