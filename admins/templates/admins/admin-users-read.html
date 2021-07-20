@@ -32,7 +32,7 @@
                                     </tr>
                                     </tfoot>
                                     <tbody>
-                                    {% for current_user in admin_users%}
+                                    {% for current_user in object_list%}
                                         <tr>
                                             <td>
                                                 <a href="{% url 'admins:users_update' current_user.id %}" style="color: dodgerblue">

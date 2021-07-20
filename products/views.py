@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from products.models import Product, ProductCategory
+from django.views.generic.list import ListView
 
 
 def index(request):
@@ -9,12 +10,15 @@ def index(request):
     return render(request, 'products/index.html', context)
 
 
-def products(request):
-    context = {
+class ProductListView(ListView):
+    model = Product
+    template_name = 'products/products.html'
+    paginate_by = 3
+    extra_context = {
         'title': 'GeekShop - Каталог',
-        'products': Product.objects.all(),
-        'categories': ProductCategory.objects.all()
+        'categories': ProductCategory.objects.all(),
     }
-    return render(request, 'products/products.html', context)
 
-
+    def get_queryset(self):
+        category_id = self.kwargs.get('category_id')
+        return Product.objects.filter(category_id=category_id) if category_id else Product.objects.all()

@@ -2,8 +2,11 @@ from django.shortcuts import render, HttpResponseRedirect
 from users.models import User
 from products.models import ProductCategory, Product
 from admins.forms import UserAdminRegistrationForm, UserAdminProfileForm, CategoryAdminForm, GoodAdminForm
-from django.urls import reverse
+from django.urls import reverse_lazy
 from django.contrib.auth.decorators import user_passes_test
+from django.utils.decorators import method_decorator
+from django.views.generic.list import ListView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
 
 def enter_validate(user):
@@ -18,146 +21,137 @@ def index(request):
     return render(request, 'admins/index.html', context)
 
 
-@user_passes_test(enter_validate)
-def admin_users_read(request):
-    context = {
-        'title': 'Административная панель - Пользователи',
-        'admin_users': User.objects.all(),
-    }
-    return render(request, 'admins/admin-users-read.html', context)
+class AdminUserListView(ListView):
+    model = User
+    template_name = 'admins/admin-users-read.html'
+    extra_context = {'title': 'Административная панель - Пользователи'}
+
+    @method_decorator(user_passes_test(enter_validate))
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
 
 
-@user_passes_test(enter_validate)
-def admin_users_create(request):
-    form = UserAdminRegistrationForm()
-    if request.method == 'POST':
-        form = UserAdminRegistrationForm(data=request.POST, files=request.FILES)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(reverse('admins:users_read'))
-    context = {
-        'title': 'Административная панель - Создание пользователя',
-        'form': form,
-    }
-    return render(request, 'admins/admin-users-create.html', context)
+class AdminUserCreateView(CreateView):
+    model = User
+    form_class = UserAdminRegistrationForm
+    template_name = 'admins/admin-users-create.html'
+    success_url = reverse_lazy('admins:users_read')
+
+    @method_decorator(user_passes_test(enter_validate))
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
 
 
-@user_passes_test(enter_validate)
-def admin_users_update(request, id):
-    selected_user = User.objects.get(id=id)
-    form = UserAdminProfileForm(instance=selected_user)
-    if request.method == 'POST':
-        form = UserAdminProfileForm(instance=selected_user, files=request.FILES, data=request.POST)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(reverse('admins:users_read'))
-    context = {
-        'title': 'Административная панель - Редактирование пользовтаеля',
-        'form': form,
-        'selected_user': selected_user,
-    }
-    return render(request, 'admins/admin-users-update-delete.html', context)
+class AdminUserUpdateView(UpdateView):
+    model = User
+    form_class = UserAdminProfileForm
+    template_name = 'admins/admin-users-update-delete.html'
+    success_url = reverse_lazy('admins:users_read')
+
+    @method_decorator(user_passes_test(enter_validate))
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
 
 
-@user_passes_test(enter_validate)
-def admin_users_delete(request, id):
-    user = User.objects.get(id=id)
-    user.is_active = False
-    user.save()
-    return HttpResponseRedirect(reverse('admins:users_read'))
+class AdminUserDeleteView(DeleteView):
+    model = User
+    template_name = 'admins/admin-users-update-delete.html'
+    success_url = reverse_lazy('admins:users_read')
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        self.object.is_active = False
+        self.object.save()
+        return HttpResponseRedirect(self.get_success_url())
+
+    @method_decorator(user_passes_test(enter_validate))
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
 
 
-@user_passes_test(enter_validate)
-def admin_categories_read(request):
-    context = {
-        'title': 'Административная панель - Категории',
-        'admin_categories': ProductCategory.objects.all(),
-    }
-    return render(request, 'admins/admin-categories-read.html', context)
+class AdminCategoryListView(ListView):
+    model = ProductCategory
+    template_name = 'admins/admin-categories-read.html'
+    extra_context = {'title': 'Административная панель - Категории'}
+
+    @method_decorator(user_passes_test(enter_validate))
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
 
 
-@user_passes_test(enter_validate)
-def admin_categories_create(request):
-    form = CategoryAdminForm()
-    if request.method == 'POST':
-        form = CategoryAdminForm(data=request.POST)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(reverse('admins:categories_read'))
-    context = {
-        'title': 'Административная панель - Создание категории',
-        'form': form,
-    }
-    return render(request, 'admins/admin-categories-create.html', context)
+class AdminCategoryCreateView(CreateView):
+    model = ProductCategory
+    form_class = CategoryAdminForm
+    template_name = 'admins/admin-categories-create.html'
+    success_url = reverse_lazy('admins:categories_read')
+
+    @method_decorator(user_passes_test(enter_validate))
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
 
 
-@user_passes_test(enter_validate)
-def admin_categories_update(request, id):
-    selected_category = ProductCategory.objects.get(id=id)
-    form = CategoryAdminForm(instance=selected_category)
-    if request.method == 'POST':
-        form = CategoryAdminForm(instance=selected_category, data=request.POST)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(reverse('admins:categories_read'))
-    context = {
-        'title': 'Административная панель - Редактирование категории',
-        'form': form,
-        'selected_category': selected_category,
-    }
-    return render(request, 'admins/admin-categories-update_delete.html', context)
+class AdminCategoryUpdateView(UpdateView):
+    model = ProductCategory
+    form_class = CategoryAdminForm
+    context_object_name = 'category'
+    template_name = 'admins/admin-categories-update_delete.html'
+    success_url = reverse_lazy('admins:categories_read')
+
+    @method_decorator(user_passes_test(enter_validate))
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
 
 
-@user_passes_test(enter_validate)
-def admin_categories_delete(request, id):
-    category = ProductCategory.objects.get(id=id)
-    category.delete()
-    return HttpResponseRedirect(reverse('admins:categories_read'))
+class AdminCategoryDeleteView(DeleteView):
+    model = ProductCategory
+    context_object_name = 'category'
+    template_name = 'admins/admin-categories-update_delete.html'
+    success_url = reverse_lazy('admins:categories_read')
+
+    @method_decorator(user_passes_test(enter_validate))
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
 
 
-@user_passes_test(enter_validate)
-def admin_goods_read(request):
-    context = {
-        'title': 'Административная панель - Продукты',
-        'admin_goods': Product.objects.all(),
-    }
-    return render(request, 'admins/admin-goods-read.html', context)
+class AdminGoodListView(ListView):
+    model = Product
+    template_name = 'admins/admin-goods-read.html'
+    extra_context = {'title': 'Административная панель - Продукты'}
+
+    @method_decorator(user_passes_test(enter_validate))
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
 
 
-@user_passes_test(enter_validate)
-def admin_goods_create(request):
-    form = GoodAdminForm()
-    if request.method == 'POST':
-        form = GoodAdminForm(data=request.POST, files=request.FILES)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(reverse('admins:goods_read'))
-    context = {
-        'title': 'Административная панель - Создание продукта',
-        'form': form,
-    }
-    return render(request, 'admins/admin-goods-create.html', context)
+class AdminGoodCreateView(CreateView):
+    model = Product
+    form_class = GoodAdminForm
+    template_name = 'admins/admin-goods-create.html'
+    success_url = reverse_lazy('admins:goods_read')
+
+    @method_decorator(user_passes_test(enter_validate))
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
 
 
-@user_passes_test(enter_validate)
-def admin_goods_update(request, id):
-    selected_good = Product.objects.get(id=id)
-    form = GoodAdminForm(instance=selected_good)
-    if request.method == 'POST':
-        form = GoodAdminForm(instance=selected_good, data=request.POST, files=request.FILES)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(reverse('admins:goods_read'))
-    context = {
-        'title': 'Административная панель - Редактирование продукта',
-        'form': form,
-        'selected_good': selected_good,
-    }
-    return render(request, 'admins/admin-goods-update-delete.html', context)
+class AdminGoodUpdateView(UpdateView):
+    model = Product
+    form_class = GoodAdminForm
+    context_object_name = 'good'
+    template_name = 'admins/admin-goods-update-delete.html'
+    success_url = reverse_lazy('admins:goods_read')
+
+    @method_decorator(user_passes_test(enter_validate))
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
 
 
-@user_passes_test(enter_validate)
-def admin_goods_delete(request, id):
-    good = Product.objects.get(id=id)
-    good.delete()
-    return HttpResponseRedirect(reverse('admins:goods_read'))
+class AdminGoodDeleteView(DeleteView):
+    model = Product
+    context_object_name = 'good'
+    template_name = 'admins/admin-goods-update-delete.html'
+    success_url = reverse_lazy('admins:goods_read')
+
+    @method_decorator(user_passes_test(enter_validate))
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
