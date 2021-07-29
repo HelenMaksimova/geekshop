@@ -5,7 +5,6 @@ from users.forms import LoginUserForm, RegistrationUserForm, ProfileUserForm
 from users.models import User
 from django.urls import reverse, reverse_lazy
 from django.contrib import auth, messages
-from baskets.models import Basket
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views.generic.edit import CreateView, UpdateView
@@ -48,16 +47,7 @@ class UserUpdateView(UpdateView):
     model = User
     template_name = 'users/profile.html'
     form_class = ProfileUserForm
-
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super().get_context_data()
-        context.update(
-            {
-                'title': 'GeekShop - Личный кабинет',
-                'baskets': Basket.objects.filter(user=self.request.user),
-            }
-        )
-        return context
+    extra_context = {'title': 'GeekShop - Личный кабинет'}
 
     def form_valid(self, form):
         form.save()
