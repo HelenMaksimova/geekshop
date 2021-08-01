@@ -22,7 +22,9 @@ class User(AbstractUser):
 class UserProfile(models.Model):
     MALE = 'M'
     FEMALE = 'W'
+    NOT_SET = 'N'
     GENDER_CHOICES = (
+        (NOT_SET, '-'),
         (MALE, 'М'),
         (FEMALE, 'Ж'),
     )
