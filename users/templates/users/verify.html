@@ -1,0 +1,16 @@
+{% extends 'users/base.html' %}
+{% load static %}
+{% block page_content %}
+    <div class="row justify-content-center">
+        <div class="card shadow-lg border-0 rounded-lg mt-5" style="padding: 30px">
+            {% if user.is_authenticated %}
+                <h1>Поздравляем!</h1>
+                <p>Пользователь {{ user.username }} успешно активирован!</p>
+            {% else %}
+                <h1>Приносим свои извинения!</h1>
+                <p>К сожалению, пользователя активировать не удалось!</p>
+            {% endif %}
+            <a href="{% url 'index' %}" class="btn btn-info btn-block">На главную</a>
+        </div>
+    </div>
+{% endblock %}
