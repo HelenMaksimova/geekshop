@@ -8,12 +8,11 @@ from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views.generic.edit import CreateView, UpdateView
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView, LogoutView
 
 
-def logout(request):
-    auth.logout(request)
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+class UserLogoutView(LogoutView):
+    next_page = 'index'
 
 
 class UserLoginView(LoginView):
