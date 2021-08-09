@@ -8,7 +8,6 @@ from django.urls import reverse_lazy, reverse
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.detail import DetailView
-
 from baskets.models import Basket
 from orders.forms import OrderItemForm
 from orders.models import Order, OrderItem
