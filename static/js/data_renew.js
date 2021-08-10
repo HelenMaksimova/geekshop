@@ -57,6 +57,7 @@ function orderItemUpdate() {
             orderSummaryUpdate(priceArray[orderitemNum], deltaQuantity);
         }
     }
+
     if (namePartsArray[2] === 'product') {
         let t_href = event.target
         $.ajax({
@@ -65,12 +66,27 @@ function orderItemUpdate() {
         })
         event.preventDefault()
     }
-    itemTotalPrice = quantityArray[orderitemNum] * priceArray[orderitemNum];
+
+    itemTotalPrice = Number((quantityArray[orderitemNum] * priceArray[orderitemNum]).toFixed(2));
     $('input[name="orderitems-' + orderitemNum + '-total_price"]').val(itemTotalPrice);
+}
+
+function deleteOrderItem(row) {
+    let namePartsArray = row[0].querySelector('input[type=number]').name.split('-');
+    orderitemNum = parseInt(namePartsArray[1]);
+    deltaQuantity = -quantityArray[orderitemNum];
+    orderSummaryUpdate(priceArray[orderitemNum], deltaQuantity)
 }
 
 window.onload = function () {
     renewOrderData()
     $('.basket_list').on('click', 'input[type="number"]', basketChange)
     $('.order_form').on('click', '.formset_td', orderItemUpdate);
+    $('.formset_row').formset({
+            addText: 'Добавить товар',
+            deleteText: 'Удалить',
+            prexix: 'orderitems',
+            removed: deleteOrderItem
+        }
+    )
 }
