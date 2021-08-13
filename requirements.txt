@@ -1,4 +1,7 @@
-Django==3.2.4
-Pillow==8.2.0
-mysqlclient==2.0.3
-python-dotenv==0.18.0
+Django
+Pillow
+python-dotenv
+social-auth-app-django
+psycopg2-binary
+requests
+
