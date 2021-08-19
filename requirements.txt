@@ -4,4 +4,7 @@ python-dotenv
 social-auth-app-django
 psycopg2-binary
 requests
-
+django-debug-toolbar
+django-debug-toolbar-template-profiler
+django-extensions
+wheel
