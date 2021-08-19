@@ -3,7 +3,7 @@
 
 {% block page_content %}
    {% include 'orders/includes/inc_order_summary.html' %}
-   <div class="order_form">
+   <div class="order_form" style="margin: 0 20px;">
        <form action="" method="post">
            {% csrf_token %}
            {{ form.as_p }}
@@ -36,8 +36,10 @@
                    </tr>
                {% endfor %}
            </table>
-           <button type="submit" value="сохранить" class="btn btn-default btn-round form-control last">сохранить</button>
+       <div style="display: flex; flex-direction: column; justify-content: center; margin: 0 auto; width: 400px;">
+           <button type="submit" value="сохранить" class="btn btn-success btn-lg order-last" style="width: 400px; margin: 10px 0; background-color: #0c5460; border-color: #0c5460;">сохранить</button>
            {% include 'orders/includes/inc_order_actions.html' %}
+       </div>
        </form>
    </div>
 {% endblock %}
