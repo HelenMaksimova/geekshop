@@ -14,9 +14,10 @@ class ProductListView(ListView):
     paginate_by = 3
     extra_context = {
         'title': 'GeekShop - Каталог',
-        'categories': ProductCategory.objects.all(),
+        'categories': ProductCategory.objects.all().select_related(),
     }
 
     def get_queryset(self):
         category_id = self.kwargs.get('category_id')
-        return Product.objects.filter(category_id=category_id) if category_id else Product.objects.all()
+        return Product.objects.filter(category_id=category_id).select_related() \
+            if category_id else Product.objects.all().select_related()

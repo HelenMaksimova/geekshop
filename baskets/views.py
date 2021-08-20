@@ -5,11 +5,13 @@ from django.contrib.auth.decorators import login_required
 from django.template.loader import render_to_string
 from django.http import JsonResponse
 
+
 @login_required
 def basket_add(request, product_id):
 
-    product = Product.objects.get(id=product_id)
-    baskets = Basket.objects.filter(user=request.user, product=product)
+    product = Product.objects.filter(id=product_id).select_related().first()
+    # baskets = Basket.objects.filter(user=request.user, product=product).select_related()
+    baskets = request.user.basket_set.filter(user=request.user, product=product).select_related()
 
     if baskets.exists():
         basket = baskets.last()
@@ -23,7 +25,8 @@ def basket_add(request, product_id):
 
 @login_required
 def basket_remove(request, id):
-    basket = Basket.objects.get(id=id)
+    basket = request.user.basket_set.filter(id=id).select_related().first()
+    # basket = Basket.objects.filter(id=id).select_related().first()
     basket.delete()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
@@ -31,14 +34,15 @@ def basket_remove(request, id):
 @login_required
 def basket_edit(request, id, quantity):
     if request.is_ajax():
-        basket = Basket.objects.get(id=id)
+        basket = request.user.basket_set.filter(id=id).select_related().first()
+        # basket = Basket.objects.filter(id=id).select_related().first()
         if quantity > 0:
             basket.quantity = quantity
             basket.save()
         else:
             basket.delete()
     context = {
-        'baskets': Basket.objects.filter(user=request.user),
+        'baskets': Basket.objects.filter(user=request.user).select_related(),
     }
     result = render_to_string('baskets/basket.html', context)
     return JsonResponse({'result': result})
