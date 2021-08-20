@@ -118,6 +118,9 @@ class AdminGoodListView(ListView):
     template_name = 'admins/admin-goods-read.html'
     extra_context = {'title': 'Административная панель - Продукты'}
 
+    def get_queryset(self):
+        return Product.objects.all().select_related()
+
     @method_decorator(user_passes_test(enter_validate))
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)

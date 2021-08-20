@@ -75,7 +75,7 @@ class UserUpdateView(UpdateView):
 
 
 def verify(request, email, activation_key):
-    user = User.objects.filter(email=email).first()
+    user = User.objects.filter(email=email).select_related().first()
     if user:
         auth.logout(request)
         if user.activation_key == activation_key and not user.is_activation_key_expired():

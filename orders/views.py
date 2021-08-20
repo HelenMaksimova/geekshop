@@ -18,7 +18,7 @@ class OrderListView(ListView):
     model = Order
 
     def get_queryset(self):
-        return Order.objects.filter(user=self.request.user)
+        return Order.objects.filter(user=self.request.user).select_related()
 
 
 class OrderDetailView(DetailView):
@@ -34,7 +34,8 @@ class OrderUpdateView(UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         OrderFormSet = inlineformset_factory(Order, OrderItem, form=OrderItemForm, extra=1)
-        formset = OrderFormSet(instance=self.object)
+        queryset = self.object.orderitems.select_related()
+        formset = OrderFormSet(instance=self.object, queryset=queryset)
 
         for form in formset.forms:
             if form.instance.pk:
@@ -81,7 +82,7 @@ class OrderCreateView(CreateView):
         if self.request.method == 'POST':
             formset = OrderFormSet(self.request.POST)
         else:
-            basket_items = Basket.objects.filter(user=self.request.user)
+            basket_items = Basket.objects.filter(user=self.request.user).select_related()
             if basket_items.exists():
                 OrderFormSet = inlineformset_factory(Order, OrderItem, form=OrderItemForm, extra=basket_items.count())
                 formset = OrderFormSet()
@@ -89,7 +90,7 @@ class OrderCreateView(CreateView):
                     form.initial['product'] = basket_items[num].product
                     form.initial['quantity'] = basket_items[num].quantity
                     form.initial['price'] = basket_items[num].product.price
-                    form.initial['total_price'] = basket_items[num].total_sum()
+                    form.initial['total_price'] = basket_items[num].total_sum
 
         context.update({
             'title': 'Geekshop: создание заказа',
@@ -100,7 +101,7 @@ class OrderCreateView(CreateView):
 
     def form_valid(self, form):
         orderitems = self.get_context_data()['orderitems']
-        basket_items = Basket.objects.filter(user=self.request.user)
+        basket_items = Basket.objects.filter(user=self.request.user).select_related()
 
         with transaction.atomic():
             form.instance.user = self.request.user
@@ -123,7 +124,7 @@ def order_forming_complete(request, pk):
 
 def order_item_price(request, pk):
     if request.is_ajax():
-        product = Product.objects.get(pk=pk)
+        product = Product.objects.filter(pk=pk).select_related().first()
         result = {'price': product.price, 'product_quantity': product.quantity}
         return JsonResponse({'result': result})
 

@@ -15,13 +15,15 @@ class Basket(models.Model):
 
     @property
     def elements(self):
-        return Basket.objects.filter(user=self.user)
+        return Basket.objects.filter(user=self.user).select_related()
 
+    @property
     def total_quantity(self):
-        return sum(item.quantity for item in self.elements)
+        return sum(list(item.quantity for item in self.elements))
 
+    @property
     def total_sum(self):
-        return sum(item.sum() for item in self.elements)
+        return sum(list(item.sum() for item in self.elements))
 
     def sum(self):
         return self.quantity * self.product.price
