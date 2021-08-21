@@ -90,7 +90,7 @@ class OrderCreateView(CreateView):
                     form.initial['product'] = basket_items[num].product
                     form.initial['quantity'] = basket_items[num].quantity
                     form.initial['price'] = basket_items[num].product.price
-                    form.initial['total_price'] = basket_items[num].total_sum
+                    form.initial['total_price'] = basket_items[num].sum()
 
         context.update({
             'title': 'Geekshop: создание заказа',
