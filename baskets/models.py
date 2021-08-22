@@ -22,11 +22,18 @@ class Basket(models.Model):
     def product_price(self):
         return self.product.price
 
+    def get_summary(self):
+        items = self.elements
+        return {
+            'total_quantity': sum(item.quantity for item in items),
+            'total_sum': sum(item.sum() for item in items)
+        }
+
     def total_quantity(self):
-        return sum(list(item.quantity for item in self.elements))
+        return sum(item.quantity for item in self.elements)
 
     def total_sum(self):
-        return sum(list(item.sum() for item in self.elements))
+        return sum(item.sum() for item in self.elements)
 
     def sum(self):
         return self.quantity * self.product_price
