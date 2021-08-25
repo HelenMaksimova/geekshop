@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from products.models import Product
+from django.utils.functional import cached_property
 
 
 class Order(models.Model):
@@ -31,12 +32,23 @@ class Order(models.Model):
     def __str__(self):
         return f'Заказ {self.id}'
 
+    @cached_property
+    def elements(self):
+        return self.orderitems.select_related()
+
+    def get_summary(self):
+        items = self.elements
+        return {
+            'total_quantity': sum(map(lambda x: x.quantity, items)),
+            'total_cost': sum(map(lambda x: x.get_product_cost, items)),
+        }
+
     def get_total_quantity(self):
-        items = self.orderitems.select_related()
+        items = self.elements
         return sum(map(lambda x: x.quantity, items))
 
     def get_total_cost(self):
-        items = self.orderitems.select_related()
+        items = self.elements
         return sum(map(lambda x: x.get_product_cost, items))
 
     def delete(self):
@@ -49,7 +61,11 @@ class OrderItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=0)
 
+    @cached_property
+    def product_price(self):
+        return self.product.price
+
     @property
     def get_product_cost(self):
-        return self.product.price * self.quantity
+        return self.product_price * self.quantity
 

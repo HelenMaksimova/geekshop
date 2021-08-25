@@ -47,7 +47,10 @@
                         <a class="nav-link" href="{% url 'users:profile' user.id %}">
                             <img src="{% static 'vendor/img/shopping_basket.svg' %}">
                             {% if baskets %}
-                                {{ baskets.0.total_sum|price_format }} руб. (товаров: {{ baskets.0.total_quantity }})
+                                {% with basket_summary=baskets.0.get_summary %}
+                                    {{ basket_summary.total_sum|price_format }} руб. (товаров:
+                                    {{ basket_summary.total_quantity }})
+                                {% endwith %}
                             {% endif %}
                         </a>
                     </li>
