@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import user_passes_test
 from django.utils.decorators import method_decorator
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.db.models import F
 
 
 def enter_validate(user):
@@ -96,6 +97,14 @@ class AdminCategoryUpdateView(UpdateView):
     context_object_name = 'category'
     template_name = 'admins/admin-categories-update_delete.html'
     success_url = reverse_lazy('admins:categories_read')
+
+    def form_valid(self, form):
+        if 'discount' in form.cleaned_data:
+            discount = form.cleaned_data['discount']
+            if discount:
+                self.object.products.update(price=F('price') * (1 - discount / 100))
+
+        return super().form_valid(form)
 
     @method_decorator(user_passes_test(enter_validate))
     def dispatch(self, request, *args, **kwargs):
