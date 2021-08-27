@@ -1,5 +1,5 @@
 from django.core.management import BaseCommand
-from django.db.models import Q, F, When, Case, FloatField, Sum, ExpressionWrapper
+from django.db.models import Q, F, When, Case, DecimalField, Sum, ExpressionWrapper
 
 from orders.models import OrderItem
 
@@ -20,16 +20,18 @@ class Command(BaseCommand):
         action_2__condition = Q(order_price__lt=4000)
 
         action_1__price = When(action_1__condition,
-                               then=ExpressionWrapper(F('order_price') * action_2__delivery, output_field=FloatField()))
+                               then=ExpressionWrapper(F('order_price') * action_2__delivery,
+                                                      output_field=DecimalField()))
         action_2__price = When(action_2__condition,
-                               then=ExpressionWrapper(F('order_price') * action_1__delivery, output_field=FloatField()))
+                               then=ExpressionWrapper(F('order_price') * action_1__delivery,
+                                                      output_field=DecimalField()))
 
         base_orders = OrderItem.objects.values('order_id').annotate(
-            order_price=Sum(F('product__price') * F('quantity'), output_field=FloatField()),
+            order_price=Sum(F('product__price') * F('quantity'), output_field=DecimalField()),
             delivery_price=Case(
                 action_1__price,
                 action_2__price,
-                output_field=FloatField()
+                output_field=DecimalField()
             )
         ).order_by('delivery_price', 'order_id')
 
