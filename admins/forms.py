@@ -20,10 +20,12 @@ class UserAdminProfileForm(ProfileUserForm):
 class CategoryAdminForm(forms.ModelForm):
     name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control py-4'}))
     description = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-control py-4'}))
+    discount = forms.IntegerField(widget=forms.NumberInput(attrs={'class': 'form-control py-4'}),
+                                  required=False, min_value=0, max_value=90, initial=0)
 
     class Meta:
         model = ProductCategory
-        fields = ('name', 'description')
+        fields = ('name', 'description', 'discount')
 
 
 class GoodAdminForm(forms.ModelForm):
